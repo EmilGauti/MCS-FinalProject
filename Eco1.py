@@ -117,6 +117,9 @@ class Blob(Objects):# has World class as an input and the coordinate of the obje
        # self.mutation = 0.2
        # self.mutation_probability = 0.1
         self.attention_spot = random_attention()
+        #print(world.world_height*random.uniform(0,1))
+        self.attention_spot.x = self.world.world_width*random.uniform(0,1)
+        self.attention_spot.y = self.world.world_height*random.uniform(0,1)
         self.obj_attention = {"food":None, "enemy":None}
         self.generate_object(self.type, self.size_blob)
         
@@ -464,7 +467,7 @@ world_width, world_height = window.get_size()
 Time = pygame.time.Clock()
 
 runTime_speed = 60
-display_world = False
+display_world = True
 
 
 blob_world = EcoSystem(world_width, world_height)
