@@ -93,18 +93,19 @@ class Blob(Objects):# has World class as an input and the coordinate of the obje
     def __init__(self, world, coord ):
         super(Blob,self).__init__(world, coord)
         self.type = "Blob"
-        self.initial_energy = 10000
+        self.initial_energy = 2000#10000->2000
         self.energy = self.initial_energy
-        self.energy_lose = 10
+        #self.energy_lose = 10
         
-        self.size_scaling = self.energy_lose# max 10
-        self.speed_scaling = 0.2*self.energy_lose# max 2
-        self.vision_scaling = 10*self.energy_lose# max 100
+        #self.size_scaling = self.energy_lose# max 10
+        #self.speed_scaling = 0.2*self.energy_lose# max 2
+        #self.vision_scaling = 10*self.energy_lose# max 100
     
         
-        self.Size = 0.1 * self.size_scaling# the first part is portion of energy and the second part is scaling
-        self.speed = 0.7 * self.speed_scaling# the first part is portion of energy and the second part is scaling
-        self.vision = 0.2 * self.vision_scaling# the first part is portion of energy and the second part is scaling
+        self.Size = 1#0.1 * self.size_scaling# the first part is portion of energy and the second part is scaling
+        self.speed = 1#0.7 * self.speed_scaling# the first part is portion of energy and the second part is scaling
+        self.vision = 20#0.2 * self.vision_scaling# the first part is portion of energy and the second part is scaling
+        self.energy_lose = self.Size**3 * self.speed**2 + self.vision/20# = 2
        # self.increment = 0.1
         self.size_blob = ( 160, 240) # this for window size
         self.world = world
@@ -261,15 +262,17 @@ class Blob(Objects):# has World class as an input and the coordinate of the obje
         # 0.2 0.3 0.5->  0.3 0.1 0.6
         #-0.1 0.2 -0.1
         #replica = Blob(self.world, (self.x, self.y - (self.width + 5)))
-        energy_percentage = 0.1
+        #energy_percentage = 0.1
         replica = Blob(self.world, birth_coord)
-        increment = energy_reDistibution(energy_percentage) - energy_reDistibution(energy_percentage)
-        replica.speed = self.speed   + increment[0] *self.speed_scaling 
-        replica.vision = self.vision + increment[1] *self.vision_scaling
-        replica.Size  = self.Size    + increment[2] *self.size_scaling
-        replica.width = self.width   + increment[2] *self.size_scaling
-        replica.height = self.height + increment[2] *self.size_scaling
+        #increment = energy_reDistibution(energy_percentage) - energy_reDistibution(energy_percentage)
+        replica.speed = self.speed   + random.uniform(-0.5,0.5)
+        replica.vision = self.vision + random.uniform(-0.5,0.5)
+        replica.Size  = self.Size    + random.uniform(-0.5,0.5)
+        replica.width = self.width   #+ increment[2] *self.size_scaling
+        replica.height = self.height #+ increment[2] *self.size_scaling
         
+        replica.energy_lose = replica.Size**3 * replica.speed**2 + replica.vision/20
+
         replica.Image = pygame.transform.scale(replica.Image0, (replica.width, replica.height))
         replica.rect = pygame.rect.Rect((replica.x, replica.y, replica.width, replica.height))
         
@@ -430,7 +433,16 @@ class EcoSystem:
         one_day_passed = ((iterations+1) %1000 == 0)
         #eco_system is a world with object and updating the system implies updating the objects of its world
         if one_day_passed:
+            #print(self.object_types)
+            #print(self.system_objects)
+            for obj in self.system_objects:
+                if isinstance(obj, Blob):
+                    print(obj)
+                    print(obj.Size)
+                    print(obj.speed)
+                    print(obj.vision)
             self.system_objects = self.eco_system.new_day(self.system_objects,object_types=self.object_types)
+            
             #self.system_objects = self.eco_system.update(self.system_objects)
         else:
             self.system_objects = self.eco_system.update(self.system_objects)
